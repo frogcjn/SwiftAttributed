@@ -28,6 +28,10 @@ let package = Package(
         .target(
             name: "SwiftAttributed",
             dependencies: []
-        )
+        ),
+        /*.testTarget(
+            name: "SwiftAttributedTests",
+            dependencies: ["SwiftAttributed"])
+        ,*/
     ]
 )
