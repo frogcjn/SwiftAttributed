@@ -139,20 +139,20 @@ public extension Attributed {
         modifier(StyleModifier(style: .fontWeight(weight, defaultFont: defaultFont), range: range))
     }
     
-    func bold(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) -> some Attributed  {
-        modifier(StyleModifier(style: .bold(defaultFont: defaultFont), range: range))
+    func bold(_ isEnabled: Bool = true, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) -> some Attributed  {
+        modifier(StyleModifier(style: .bold(isEnabled, defaultFont: defaultFont), range: range))
     }
     
-    func italic(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) -> some Attributed  {
-        modifier(StyleModifier(style: .italic(defaultFont: defaultFont), range: range))
+    func italic(_ isEnabled: Bool = true, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) -> some Attributed  {
+        modifier(StyleModifier(style: .italic(isEnabled,defaultFont: defaultFont), range: range))
     }
     
-    func `subscript`(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) -> some Attributed  {
-        modifier(StyleModifier(style: .subscript(defaultFont: defaultFont), range: range))
+    func `subscript`(_ isEnabled: Bool = true, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) -> some Attributed  {
+        modifier(StyleModifier(style: .subscript(isEnabled, defaultFont: defaultFont), range: range))
     }
     
-    func superscript(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) -> some Attributed  {
-        modifier(StyleModifier(style: .superscript(defaultFont: defaultFont), range: range))
+    func superscript(_ isEnabled: Bool = true, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) -> some Attributed  {
+        modifier(StyleModifier(style: .superscript(isEnabled, defaultFont: defaultFont), range: range))
     }
     
     func font(_ font: Font, in range: Range<Int>? = nil) -> some Attributed {
@@ -167,12 +167,12 @@ public extension Attributed {
         modifier(StyleModifier(style: .backgroundColor(color), range: range))
     }
 
-    func strikethrough(_ enabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) -> some Attributed  {
-        modifier(StyleModifier(style: .strikethrough(enabled, color: color), range: range))
+    func strikethrough(_ isEnabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) -> some Attributed  {
+        modifier(StyleModifier(style: .strikethrough(isEnabled, color: color), range: range))
     }
     
-    func underline(_ enabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) -> some Attributed  {
-        modifier(StyleModifier(style: .underline(enabled, color: color), range: range))
+    func underline(_ isEnabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) -> some Attributed  {
+        modifier(StyleModifier(style: .underline(isEnabled, color: color), range: range))
     }
     
     func kerning(_ kerning: CGFloat, in range: Range<Int>? = nil) -> some Attributed  {
@@ -187,8 +187,8 @@ public extension Attributed {
         modifier(StyleModifier(style: .baselineOffset(baselineOffset), range: range))
     }
     
-    func allowsTightening(_ enabled: Bool, in range: Range<Int>? = nil) -> some Attributed  {
-        modifier(StyleModifier(style: .allowsTightening(enabled), range: range))
+    func allowsTightening(_ isEnabled: Bool, in range: Range<Int>? = nil) -> some Attributed  {
+        modifier(StyleModifier(style: .allowsTightening(isEnabled), range: range))
     }
     
     func truncationMode(_ mode: NSLineBreakMode, in range: Range<Int>? = nil) -> some Attributed  {
@@ -203,7 +203,7 @@ public extension Attributed {
         modifier(StyleModifier(style: .multilineTextAlignment(alignment), range: range))
     }
     
-    func flipsForRightToLeftLayoutDirection(_ enabled: Bool, in range: Range<Int>? = nil) -> some Attributed  {
-        modifier(StyleModifier(style: .flipsForRightToLeftLayoutDirection(enabled), range: range))
+    func flipsForRightToLeftLayoutDirection(_ isEnabled: Bool, in range: Range<Int>? = nil) -> some Attributed  {
+        modifier(StyleModifier(style: .flipsForRightToLeftLayoutDirection(isEnabled), range: range))
     }
 }

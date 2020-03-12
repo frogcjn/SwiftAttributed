@@ -58,12 +58,12 @@ public extension FontDescriptor {
         #endif
     }
     
-    func symbolicTraits(_ traits: SymbolicTraits) -> FontDescriptor {
-        #if os(macOS)
-        return withSymbolicTraits(symbolicTraits.union(traits))
-        #else
-        return withSymbolicTraits(symbolicTraits.union(traits)) ?? self
-        #endif
+    func addSymbolicTraits(_ traits: SymbolicTraits) -> FontDescriptor {
+        setSymbolicTraits(symbolicTraits.union(traits))
+    }
+    
+    func removeSymbolicTraits(_ traits: SymbolicTraits) -> FontDescriptor {
+        setSymbolicTraits(symbolicTraits.subtracting(traits))
     }
     
     func symbolicTraitsContains(_ traits: SymbolicTraits) -> Bool {
@@ -79,12 +79,12 @@ public extension FontDescriptor {
         return addingAttributes([.traits: traits])
     }
     
-    func bold() -> FontDescriptor {
-        symbolicTraits(.bold)
+    func bold(_ isEnabled: Bool) -> FontDescriptor {
+        isEnabled ? addSymbolicTraits(.bold) : removeSymbolicTraits(.bold)
     }
     
-    func italic() -> FontDescriptor {
-        symbolicTraits(.italic)
+    func italic(_ isEnabled: Bool) -> FontDescriptor {
+        isEnabled ? addSymbolicTraits(.italic) : removeSymbolicTraits(.italic)
     }
     
     func monospacedDigit() -> FontDescriptor {
@@ -157,14 +157,19 @@ public extension Font {
         Self.withFontDescriptor(fontDescriptor.setFeatureSettings(featureSettings))
     }
     
-    // add symbolic traits
-    func symbolicTraits(_ traits: FontDescriptor.SymbolicTraits) -> Font {
-        Self.withFontDescriptor(fontDescriptor.symbolicTraits(traits))
-    }
-    
     // set symbolic traits
     func setSymbolicTraits(_ traits: FontDescriptor.SymbolicTraits) -> Font {
         Self.withFontDescriptor(fontDescriptor.setSymbolicTraits(traits))
+    }
+    
+    // add symbolic traits
+    func addSymbolicTraits(_ traits: FontDescriptor.SymbolicTraits) -> Font {
+        Self.withFontDescriptor(fontDescriptor.addSymbolicTraits(traits))
+    }
+    
+    // remove symbolic traits
+    func removeSymbolicTraits(_ traits: FontDescriptor.SymbolicTraits) -> Font {
+        Self.withFontDescriptor(fontDescriptor.removeSymbolicTraits(traits))
     }
     
     func design(_ design: FontDescriptor.SystemDesign) -> Font {
@@ -175,12 +180,12 @@ public extension Font {
         Self.withFontDescriptor(fontDescriptor.weight(weight))
     }
 
-    func bold() -> Font {
-        Self.withFontDescriptor(fontDescriptor.bold())
+    func bold(_ isEnabled: Bool) -> Font {
+        Self.withFontDescriptor(fontDescriptor.bold(isEnabled))
     }
 
-    func italic() -> Font {
-        Self.withFontDescriptor(fontDescriptor.italic())
+    func italic(_ isEnabled: Bool) -> Font {
+        Self.withFontDescriptor(fontDescriptor.italic(isEnabled))
     }
     
     func monospacedDigit() -> Font {

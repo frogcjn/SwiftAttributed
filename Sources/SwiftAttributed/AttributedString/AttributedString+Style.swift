@@ -14,10 +14,10 @@ import AppKit
 
 public enum Style {
     case fontWeight(Font.Weight, defaultFont: Font)
-    case bold(defaultFont: Font)
-    case italic(defaultFont: Font)
-    case `subscript`(defaultFont: Font)
-    case superscript(defaultFont: Font)
+    case bold(Bool, defaultFont: Font)
+    case italic(Bool, defaultFont: Font)
+    case `subscript`(Bool, defaultFont: Font)
+    case superscript(Bool, defaultFont: Font)
 
     case font(Font)
     case foregroundColor(Color)
@@ -50,24 +50,40 @@ public extension AttributedString {
         }
     }
     
-    mutating func setFontWeight(_ weight: Font.Weight, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.fontWeight(weight, defaultFont: defaultFont), in: range)
-    }
-    
     mutating func addBold(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.bold(defaultFont: defaultFont), in: range)
+        addStyle(.bold(true, defaultFont: defaultFont), in: range)
     }
     
     mutating func addItalic(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.italic(defaultFont: defaultFont), in: range)
+        addStyle(.italic(true, defaultFont: defaultFont), in: range)
     }
     
     mutating func addSubscript(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.subscript(defaultFont: defaultFont), in: range)
+        addStyle(.subscript(true, defaultFont: defaultFont), in: range)
     }
     
     mutating func addSuperscript(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.superscript(defaultFont: defaultFont), in: range)
+        addStyle(.superscript(true, defaultFont: defaultFont), in: range)
+    }
+    
+    mutating func removeBold(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
+        addStyle(.bold(false, defaultFont: defaultFont), in: range)
+    }
+    
+    mutating func removeItalic(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
+        addStyle(.italic(false, defaultFont: defaultFont), in: range)
+    }
+    
+    mutating func removeSubscript(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
+        addStyle(.subscript(false, defaultFont: defaultFont), in: range)
+    }
+    
+    mutating func removeSuperscript(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
+        addStyle(.superscript(false, defaultFont: defaultFont), in: range)
+    }
+    
+    mutating func setFontWeight(_ weight: Font.Weight, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
+        addStyle(.fontWeight(weight, defaultFont: defaultFont), in: range)
     }
     
     mutating func setFont(_ font: Font, in range: Range<Int>? = nil) {
@@ -82,12 +98,12 @@ public extension AttributedString {
         addStyle(.backgroundColor(color), in: range)
     }
 
-    mutating func setStrikethrough(_ enabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) {
-        addStyle(.strikethrough(enabled, color: color), in: range)
+    mutating func setStrikethrough(_ isEnabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) {
+        addStyle(.strikethrough(isEnabled, color: color), in: range)
     }
     
-    mutating func setUnderline(_ enabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) {
-        addStyle(.underline(enabled, color: color), in: range)
+    mutating func setUnderline(_ isEnabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) {
+        addStyle(.underline(isEnabled, color: color), in: range)
     }
     
     mutating func setKerning(_ kerning: CGFloat, in range: Range<Int>? = nil) {
@@ -102,8 +118,8 @@ public extension AttributedString {
         addStyle(.baselineOffset(baselineOffset), in: range)
     }
     
-    mutating func setAllowsTightening(_ enabled: Bool, in range: Range<Int>? = nil) {
-        addStyle(.allowsTightening(enabled), in: range)
+    mutating func setAllowsTightening(_ isEnabled: Bool, in range: Range<Int>? = nil) {
+        addStyle(.allowsTightening(isEnabled), in: range)
     }
     
     mutating func setTruncationMode(_ mode: NSLineBreakMode, in range: Range<Int>? = nil) {
@@ -118,8 +134,8 @@ public extension AttributedString {
         addStyle(.multilineTextAlignment(alignment), in: range)
     }
     
-    mutating func setFlipsForRightToLeftLayoutDirection(_ enabled: Bool, in range: Range<Int>? = nil) {
-        addStyle(.flipsForRightToLeftLayoutDirection(enabled), in: range)
+    mutating func setFlipsForRightToLeftLayoutDirection(_ isEnabled: Bool, in range: Range<Int>? = nil) {
+        addStyle(.flipsForRightToLeftLayoutDirection(isEnabled), in: range)
     }
 }
 
@@ -134,14 +150,14 @@ extension Dictionary where Key == NSAttributedString.Key, Value == Any {
         case .kerning        (let kerning       ): return [.kern           : kerning       ]
         case .tracking       (let tracking      ): return [.kern           : tracking      ]
         case .baselineOffset (let baselineOffset): return [.baselineOffset : baselineOffset]
-        case .strikethrough(let enabled, let color):
+        case .strikethrough(let isEnabled, let color):
             return [
-                .strikethroughStyle: (enabled ? .single : []) as NSUnderlineStyle,
+                .strikethroughStyle: (isEnabled ? .single : []) as NSUnderlineStyle,
                 .strikethroughColor: color ?? NSNull()
             ]
-        case .underline(let enabled, let color):
+        case .underline(let isEnabled, let color):
             return [
-                .underlineStyle: (enabled ? .single : []) as NSUnderlineStyle,
+                .underlineStyle: (isEnabled ? .single : []) as NSUnderlineStyle,
                 .underlineColor: color ?? NSNull()
             ]
         case .fontWeight,
@@ -152,16 +168,26 @@ extension Dictionary where Key == NSAttributedString.Key, Value == Any {
             let font = self[.font] as! Font?
             switch style {
             case .fontWeight(let weight, let defaultFont): return [.font: (font ?? defaultFont).weight(weight)]
-            case .bold       (let defaultFont): return [.font: (font ?? defaultFont).bold()        ]
-            case .italic     (let defaultFont): return [.font: (font ?? defaultFont).italic()      ]
-            case .superscript(let defaultFont), .subscript(let defaultFont):
-                    let superscriptFontSize = (font ?? defaultFont).pointSize * 5/6
+            case .bold       (let isEnabled, let defaultFont):
+                return [.font: (font ?? defaultFont).bold(isEnabled)        ]
+            case .italic     (let isEnabled, let defaultFont):
+                return [.font: (font ?? defaultFont).italic(isEnabled)      ]
+            case .superscript(let isEnabled, let defaultFont), .subscript(let isEnabled, let defaultFont):
+                let font = font ?? defaultFont
+                if isEnabled {
+                    let superscriptFontSize = font.pointSize * 5/6
                     let value: Int
                     if case .superscript = style { value = SuperscriptValue.superscript } else { value = SuperscriptValue.subscript }
                     return [
-                               .font: (font ?? defaultFont).withSize(superscriptFontSize),
+                               .font: font.withSize(superscriptFontSize),
                         .superscript: value
                     ]
+                } else {
+                    return [
+                               .font: font,
+                        .superscript: 0
+                    ]
+                }
                 default: fatalError()
             }
         case .allowsTightening,
@@ -172,11 +198,11 @@ extension Dictionary where Key == NSAttributedString.Key, Value == Any {
             let unmutableParagraphStyle = self[.paragraphStyle] as! NSParagraphStyle? ?? .init()
             let paragraphStyle = unmutableParagraphStyle.mutableCopy() as! NSMutableParagraphStyle
             switch style {
-            case .allowsTightening                  (let enabled  ): paragraphStyle.allowsDefaultTighteningForTruncation = enabled
+            case .allowsTightening                  (let isEnabled): paragraphStyle.allowsDefaultTighteningForTruncation = isEnabled
             case .truncationMode                    (let mode     ): paragraphStyle.lineBreakMode                        = mode
             case .lineSpacing                       (let spacing  ): paragraphStyle.lineSpacing                          = spacing
             case .multilineTextAlignment            (let alignment): paragraphStyle.alignment                            = alignment
-            case .flipsForRightToLeftLayoutDirection(let enabled  ): paragraphStyle.baseWritingDirection                 = enabled ? .rightToLeft : .natural
+            case .flipsForRightToLeftLayoutDirection(let isEnabled): paragraphStyle.baseWritingDirection                 = isEnabled ? .rightToLeft : .natural
             default: fatalError()
             }
             return [.paragraphStyle: paragraphStyle.copy()]
