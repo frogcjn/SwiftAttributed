@@ -79,11 +79,11 @@ public extension FontDescriptor {
         return addingAttributes([.traits: traits])
     }
     
-    func bold(_ isEnabled: Bool) -> FontDescriptor {
+    func bold(_ isEnabled: Bool = true) -> FontDescriptor {
         isEnabled ? addSymbolicTraits(.bold) : removeSymbolicTraits(.bold)
     }
     
-    func italic(_ isEnabled: Bool) -> FontDescriptor {
+    func italic(_ isEnabled: Bool = true) -> FontDescriptor {
         isEnabled ? addSymbolicTraits(.italic) : removeSymbolicTraits(.italic)
     }
     
@@ -180,11 +180,11 @@ public extension Font {
         Self.withFontDescriptor(fontDescriptor.weight(weight))
     }
 
-    func bold(_ isEnabled: Bool) -> Font {
+    func bold(_ isEnabled: Bool = true) -> Font {
         Self.withFontDescriptor(fontDescriptor.bold(isEnabled))
     }
 
-    func italic(_ isEnabled: Bool) -> Font {
+    func italic(_ isEnabled: Bool = true) -> Font {
         Self.withFontDescriptor(fontDescriptor.italic(isEnabled))
     }
     

@@ -167,11 +167,11 @@ public extension Attributed {
         modifier(StyleModifier(style: .backgroundColor(color), range: range))
     }
 
-    func strikethrough(_ isEnabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) -> some Attributed  {
+    func strikethrough(_ isEnabled: Bool, color: Color, in range: Range<Int>? = nil) -> some Attributed  {
         modifier(StyleModifier(style: .strikethrough(isEnabled, color: color), range: range))
     }
     
-    func underline(_ isEnabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) -> some Attributed  {
+    func underline(_ isEnabled: Bool, color: Color, in range: Range<Int>? = nil) -> some Attributed  {
         modifier(StyleModifier(style: .underline(isEnabled, color: color), range: range))
     }
     

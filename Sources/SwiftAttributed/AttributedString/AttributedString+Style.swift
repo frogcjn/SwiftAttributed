@@ -22,8 +22,8 @@ public enum Style {
     case font(Font)
     case foregroundColor(Color)
     case backgroundColor(Color)
-    case strikethrough(Bool, color: Color? = nil)
-    case underline(Bool, color: Color? = nil)
+    case strikethrough(Bool, color: Color)
+    case underline(Bool, color: Color)
     case kerning(CGFloat)
     case tracking(CGFloat)
     case baselineOffset(CGFloat)
@@ -50,36 +50,20 @@ public extension AttributedString {
         }
     }
     
-    mutating func addBold(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.bold(true, defaultFont: defaultFont), in: range)
+    mutating func bold(_ isEnabled: Bool = true, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
+        addStyle(.bold(isEnabled, defaultFont: defaultFont), in: range)
+    }
+
+    mutating func italic(_ isEnabled: Bool = true, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
+        addStyle(.italic(isEnabled, defaultFont: defaultFont), in: range)
     }
     
-    mutating func addItalic(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.italic(true, defaultFont: defaultFont), in: range)
+    mutating func `subscript`(_ isEnabled: Bool = true, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
+        addStyle(.subscript(isEnabled, defaultFont: defaultFont), in: range)
     }
     
-    mutating func addSubscript(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.subscript(true, defaultFont: defaultFont), in: range)
-    }
-    
-    mutating func addSuperscript(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.superscript(true, defaultFont: defaultFont), in: range)
-    }
-    
-    mutating func removeBold(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.bold(false, defaultFont: defaultFont), in: range)
-    }
-    
-    mutating func removeItalic(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.italic(false, defaultFont: defaultFont), in: range)
-    }
-    
-    mutating func removeSubscript(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.subscript(false, defaultFont: defaultFont), in: range)
-    }
-    
-    mutating func removeSuperscript(defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
-        addStyle(.superscript(false, defaultFont: defaultFont), in: range)
+    mutating func superscript(_ isEnabled: Bool = true, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
+        addStyle(.superscript(isEnabled, defaultFont: defaultFont), in: range)
     }
     
     mutating func setFontWeight(_ weight: Font.Weight, defaultFont: Font = systemDefaultFont, in range: Range<Int>? = nil) {
@@ -98,11 +82,11 @@ public extension AttributedString {
         addStyle(.backgroundColor(color), in: range)
     }
 
-    mutating func setStrikethrough(_ isEnabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) {
+    mutating func setStrikethrough(_ isEnabled: Bool, color: Color, in range: Range<Int>? = nil) {
         addStyle(.strikethrough(isEnabled, color: color), in: range)
     }
     
-    mutating func setUnderline(_ isEnabled: Bool, color: Color? = nil, in range: Range<Int>? = nil) {
+    mutating func setUnderline(_ isEnabled: Bool, color: Color, in range: Range<Int>? = nil) {
         addStyle(.underline(isEnabled, color: color), in: range)
     }
     
@@ -153,12 +137,12 @@ extension Dictionary where Key == NSAttributedString.Key, Value == Any {
         case .strikethrough(let isEnabled, let color):
             return [
                 .strikethroughStyle: (isEnabled ? .single : []) as NSUnderlineStyle,
-                .strikethroughColor: color ?? NSNull()
+                .strikethroughColor: isEnabled ? color : NSNull()
             ]
         case .underline(let isEnabled, let color):
             return [
                 .underlineStyle: (isEnabled ? .single : []) as NSUnderlineStyle,
-                .underlineColor: color ?? NSNull()
+                .underlineColor: isEnabled ? color : NSNull()
             ]
         case .fontWeight,
              .bold,
